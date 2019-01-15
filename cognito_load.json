@@ -1,0 +1,82 @@
+{
+    "config": {
+        "target": "https://api-poc.cfinx.com",
+        "phases": [
+            {
+                "duration": 1,
+                "arrivalRate": 1
+            }
+        ],
+        "payload": {
+            "path": "users.csv",
+            "fields": [
+                "username",
+                "password"
+            ],
+            "order": "sequence"
+        },
+        "plugins": {
+            "expect": {}
+        }
+    },
+    "scenarios": [
+        {
+            "flow": [
+                {
+                    "post": {
+                        "url": "/user/login",
+                        "content-type": "application/json",
+                        "json": {
+                            "user": {
+                                "username": "{{ username }} ",
+                                "password": "{{ password }}"
+                            }
+                        },
+                        "capture": [
+                            {
+                                "json": "$.data.accessToken",
+                                "as": "accesstoken"
+                            },
+                            {
+                                "json": "$.data.idToken",
+                                "as": "idtoken"
+                            },
+                            {
+                                "json": "$.data.refreshToken",
+                                "as": "refreshtoken"
+                            }
+                        ],
+                        "expect": {
+                            "statusCode": "201"
+                        }
+                    }
+                },
+                {
+                    "get": {
+                        "url": "https://wallet-poc.cfinx.com/balance/all",
+                        "content-type": "application/json",
+                        "headers": {
+                            "accesstoken": "{{ accesstoken }}",
+                            "idtoken": "{{ idtoken }}",
+                            "refreshtoken": "{{ refreshtoken }}"
+                        },
+                        "capture": {
+                            "json": "$.data.balances[0].balance",
+                            "as": "currency"
+                        },
+                        "expect": {
+                            "hasProperty": "data.balances[0].balance",
+                            "equals": [
+                                "{{ currency }}",
+                                "997.82063"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "log": "new user is logged in {{ currency }}"
+                }
+            ]
+        }
+    ]
+}

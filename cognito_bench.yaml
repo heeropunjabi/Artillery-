@@ -1,0 +1,28 @@
+config:
+  target: "https://develop.cfinx.com/"
+  phases:
+    - duration: 10
+      arrivalRate: 2
+scenarios:
+  - flow:
+      - log: "New virtual user running {{ accesstoken }}"
+      - post:
+          url: "https://api-develop.cfinx.com/user/login"
+          json:
+            user:
+              username: "hp30@mailinator.com"
+              password: "qwerty123!"
+              code: ""
+          capture:
+            - json: "$.data.accessToken"
+              as: "accesstoken"
+            - json: "$.data.idToken"
+              as: "idtoken"
+            - json: "$.data.refreshToken"
+              as: "refreshtoken"       
+      - get:
+          url: "https://wallet-develop.cfinx.com/balance/all"
+          headers:
+            accesstoken: "{{ accesstoken }}"
+            idtoken: "{{ idtoken1 }}"
+            refreshtoken: "{{ refreshtoken }}"

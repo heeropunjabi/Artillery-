@@ -1,0 +1,11 @@
+order_type,trade_type,unit_price,amount,token
+sell,limit,0.002801,0.1,fc1994af-9cea-4298-998a-4afbbc0b1137
+sell,limit,0.008401,0.3,fc1994af-9cea-4298-998a-4afbbc0b1137
+sell,limit,0.014011,0.5,fc1994af-9cea-4298-998a-4afbbc0b1137
+sell,limit,0.005601,0.2,fc1994af-9cea-4298-998a-4afbbc0b1137
+sell,limit,0.019621,0.7,fc1994af-9cea-4298-998a-4afbbc0b1137
+buy,market,0.002801,0.1,7bb8e036-abd2-4ba2-ae76-a3a21b653d4b
+buy,limit,0.008401,0.3,7bb8e036-abd2-4ba2-ae76-a3a21b653d4b
+buy,market,0.014011,0.5,7bb8e036-abd2-4ba2-ae76-a3a21b653d4b
+buy,limit,0.005601,0.2,7bb8e036-abd2-4ba2-ae76-a3a21b653d4b
+buy,market,0.019621,0.7,7bb8e036-abd2-4ba2-ae76-a3a21b653d4b

@@ -3,20 +3,17 @@
         "target": "https://api-poc.cfinx.com",
         "phases": [
             {
-                "duration": 1,
-                "arrivalRate": 1
+                "duration": 5,
+                "arrivalRate": 10
             }
         ],
-        "payload": {
-            "path": "users.csv",
-            "fields": [
-                "username",
-                "password"
-            ],
-            "order": "sequence"
-        },
         "plugins": {
-            "expect": {}
+            "expect": {},
+            "statsd": {
+                "host": "54.173.171.255",
+                "port": 8126,
+                "prefix": "artillery-cognito"
+            }
         }
     },
     "scenarios": [
@@ -24,12 +21,13 @@
             "flow": [
                 {
                     "post": {
-                        "url": "/user/login",
+                        "url": "https://api-poc.cfinx.com/user/login",
                         "content-type": "application/json",
                         "json": {
                             "user": {
-                                "username": "{{ username }} ",
-                                "password": "{{ password }}"
+                                "username": "hp20@mailinator.com",
+                                "password": "qwerty123!",
+                                "code": ""
                             }
                         },
                         "capture": [
@@ -52,6 +50,46 @@
                     }
                 },
                 {
+                    "post": {
+                        "url": "https://market-poc.cfinx.com/market/orders/limit/buy",
+                        "content-type": "application/json",
+                        "headers": {
+                            "accesstoken": "{{ accesstoken }}",
+                            "idtoken": "{{ idtoken }}",
+                            "refreshtoken": "{{ refreshtoken }}"
+                        },
+                        "json": {
+                            "amount": 0.5,
+                            "market": "ETH_BTC",
+                            "type": 2,
+                            "unit_price": 0.5
+                        },
+                        "expect": {
+                            "statusCode": "200"
+                        }
+                    }
+                },
+                {
+                    "post": {
+                        "url": "https://market-poc.cfinx.com/market/orders/limit/sell",
+                        "content-type": "application/json",
+                        "headers": {
+                            "accesstoken": "{{ accesstoken }}",
+                            "idtoken": "{{ idtoken }}",
+                            "refreshtoken": "{{ refreshtoken }}"
+                        },
+                        "json": {
+                            "amount": 0.5,
+                            "market": "ETH_BTC",
+                            "type": 2,
+                            "unit_price": 0.5
+                        },
+                        "expect": {
+                            "statusCode": "200"
+                        }
+                    }
+                },
+                {
                     "get": {
                         "url": "https://wallet-poc.cfinx.com/balance/all",
                         "content-type": "application/json",
@@ -60,21 +98,13 @@
                             "idtoken": "{{ idtoken }}",
                             "refreshtoken": "{{ refreshtoken }}"
                         },
-                        "capture": {
-                            "json": "$.data.balances[0].balance",
-                            "as": "currency"
-                        },
                         "expect": {
-                            "hasProperty": "data.balances[0].balance",
-                            "equals": [
-                                "{{ currency }}",
-                                "997.82063"
-                            ]
+                            "statusCode": "200"
                         }
                     }
                 },
                 {
-                    "log": "new user is logged in {{ currency }}"
+                    "log": "new user is logged in {{ accesstoken }}"
                 }
             ]
         }
